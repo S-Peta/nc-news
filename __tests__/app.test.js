@@ -1,7 +1,7 @@
 const request = require("supertest")
 const app = require("../app/app")
 const seed = require("../db/seeds/seed")
-// const db = require("../db/data/test-data/index")
+const db = require("../db/data/test-data/index")
 const endpoints = require("../endpoints.json")
 const articleData = require("../db/data/test-data/articles")
 const commentData = require("../db/data/test-data/comments")
@@ -9,7 +9,7 @@ const topicData = require("../db/data/test-data/topics")
 const userData = require("../db/data/test-data/users")
 
 beforeEach(() => seed({articleData, commentData, topicData, userData}));
-
+// afterAll(() => db.end());
 
 describe('/api', () => {
   test('Return 200 to the client', () => {
