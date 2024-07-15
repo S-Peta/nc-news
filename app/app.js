@@ -7,7 +7,6 @@ const app = express()
 app.use(express.json());
 
 app.get("/api/topics", (req, res) => {
-  console.log(topicData);
   res.status(200).send({topics: {topicData}})
 });
 
