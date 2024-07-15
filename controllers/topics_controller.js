@@ -9,7 +9,7 @@ function getTopics(req, res) {
   })
   .catch(err => {
     console.error('Error in controller:', err);
-    res.status(500).json({ error: err.message });
+    res.status(500).send({ error: err.message });
   });
 }
 
