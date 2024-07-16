@@ -40,7 +40,7 @@ describe('/api/topics', () => {
   })
 });
 
-describe.only('/api/articles', () => {
+describe('/api/articles', () => {
   test('Responds with the articles data and status 200', () => {
     return request(app)
       .get("/api/articles")
@@ -59,12 +59,6 @@ describe.only('/api/articles', () => {
 })
 
 describe('/api/articles/:article_id', () => {
-  test('Return 200 to the client at this endpoint', () => {
-    return request(app)
-      .get('/api/articles/2')
-      .expect(200)
-  })
-
   test.skip('Return the data with the right article', () => {
     return request(app)
       .get('/api/articles/1')
@@ -85,5 +79,29 @@ describe('/api/articles/:article_id', () => {
 
         expect(body.article).toEqual(expectedBody);
       })
+  })
+})
+
+describe('/api/articles/:article_id/comments', () => {
+  test('Return the data with the right article', () => {
+    return request(app)
+      .get('/api/articles/1/comments')
+      .expect(200)
+      .then(({body}) => {
+        const {comments} = body
+
+        expect(comments).toHaveLength(11);
+        expect(comments).toBeSortedBy("created_at", {descending: true});
+        comments.forEach((comment) => {
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.votes).toBe("number");
+        })
+      })
+  })
+
+  test('Responds with an error when given article doesn exist', () => {
+    return request(app)
+    .get('/api/articles/99/comments')
+    .expect(404)
   })
 })
