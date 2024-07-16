@@ -18,7 +18,6 @@ function listArticles() {
     `;
 
   return db.query(queryStr).then((articlesData) => {
-    console.log(articlesData.rows);
     return articlesData.rows;
   });
 }
