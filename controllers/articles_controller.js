@@ -1,6 +1,12 @@
-const selectArticle = require("../models/article_model")
+const {listArticles, selectArticle} = require("../models/article_model")
 
-function getArticle(req, res) {
+function getArticles(req, res) {
+  listArticles().then((articles) => {
+    res.status(200).send({articles})
+  })
+}
+
+function getArticleById(req, res) {
   const {article_id} = req.params
 
   selectArticle(article_id).then((article) => {
@@ -8,4 +14,4 @@ function getArticle(req, res) {
   })
 }
 
-module.exports = getArticle
+module.exports = {getArticles, getArticleById}

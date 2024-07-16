@@ -14,12 +14,6 @@ beforeEach(() => seed({articleData, commentData, topicData, userData}));
 afterAll(() => db.end());
 
 describe('/api', () => {
-  test('Return 200 to the client at this endpoint', () => {
-    return request(app)
-      .get('/api')
-      .expect(200)
-  })
-
   test('Return the content on the endpoints.json file', () => {
     return request(app)
       .get('/api')
@@ -31,12 +25,7 @@ describe('/api', () => {
 });
 
 describe('/api/topics', () => {
-  test('Return 200 to the client at this endpoint', () => {
-    return request(app)
-      .get('/api/topics')
-      .expect(200)
-  })
-  test('Return the data to the client', () => {
+  test('Responds with the topics data and status 200', () => {
     return request(app)
       .get('/api/topics')
       .expect(200)
@@ -49,6 +38,23 @@ describe('/api/topics', () => {
       })
   })
 });
+
+describe('/api/articles', () => {
+  test('Responds with the articles data and status 200', () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({body}) => {
+        const {articles} = body;
+
+        expect(articles).toHaveLength(13);
+        articles.forEach((article) => {
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.votes).toBe("number");
+        })
+      })
+  })
+})
 
 describe('/api/articles/:article_id', () => {
   test('Return 200 to the client at this endpoint', () => {
