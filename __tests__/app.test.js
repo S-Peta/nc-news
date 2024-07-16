@@ -1,3 +1,4 @@
+require("jest-sorted");
 const request = require("supertest")
 const app = require("../app/app")
 const seed = require("../db/seeds/seed")
@@ -39,7 +40,7 @@ describe('/api/topics', () => {
   })
 });
 
-describe('/api/articles', () => {
+describe.only('/api/articles', () => {
   test('Responds with the articles data and status 200', () => {
     return request(app)
       .get("/api/articles")
@@ -48,6 +49,7 @@ describe('/api/articles', () => {
         const {articles} = body;
 
         expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("created_at", {descending: true});
         articles.forEach((article) => {
           expect(typeof article.title).toBe("string");
           expect(typeof article.votes).toBe("number");
