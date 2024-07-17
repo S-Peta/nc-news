@@ -1,6 +1,6 @@
 const express = require("express");
 const getTopics = require("../controllers/topics_controller");
-const {getArticles, getArticleById} = require("../controllers/articles_controller")
+const {getArticles, getArticleById, patchArticle} = require("../controllers/articles_controller")
 const getEndpoints = require("../controllers/endpoints_controller")
 const {getCommentsByArticleId, postComment}= require("../controllers/comments_controller")
 
@@ -19,6 +19,8 @@ app.get("/api/articles/:article_id", getArticleById)
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId)
 
 app.post("/api/articles/:article_id/comments", postComment)
+
+app.patch("/api/articles/:article_id", patchArticle)
 
 app.use((err, req, res, next) => {
   if(err.status && err.msg) {

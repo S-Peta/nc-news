@@ -180,3 +180,48 @@ describe('POST /api/articles/:article_id/comments', () => {
     });
   })
 })
+
+describe('PATCH /api/articles/:article_id', () => {
+  test('responds with the field votes updated', () => {
+    return request(app)
+    .patch('/api/articles/3')
+    .send({inc_votes: 15})
+
+    .expect(200)
+    .then((response) => {
+      expect(response.body.article).toMatchObject({
+        article_id: 3,
+        title: "Eight pug gifs that remind me of mitch",
+        topic: "mitch",
+        author: "icellusedkars",
+        body: "some gifs",
+        created_at: "2020-11-03T09:12:00.000Z",
+        votes: 15,
+        article_img_url:
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+      })
+    })
+  })
+
+  test('Responds with an error 404 when given article doesn exist', () => {
+    return request(app)
+    .patch('/api/articles/99')
+    .send({inc_votes: 15})
+
+    .expect(404)
+    .then((response) => {
+      expect(response.body.msg).toBe('Article not found');
+    });
+  })
+
+  test('Responds with an error 400 when given endpoint doesn exist', () => {
+    return request(app)
+    .patch('/api/articles/notAnId')
+    .send({inc_votes: 15})
+
+    .expect(400)
+    .then((response) => {
+      expect(response.body.msg).toBe('Invalid input');
+    });
+  })
+})
