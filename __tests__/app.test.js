@@ -8,7 +8,8 @@ const endpoints = require("../endpoints.json")
 const articleData = require("../db/data/test-data/articles")
 const commentData = require("../db/data/test-data/comments")
 const topicData = require("../db/data/test-data/topics")
-const userData = require("../db/data/test-data/users")
+const userData = require("../db/data/test-data/users");
+const articles = require("../db/data/test-data/articles");
 
 beforeEach(() => seed({articleData, commentData, topicData, userData}));
 afterAll(() => db.end());
@@ -241,5 +242,24 @@ describe('DELETE /api/comments/:comment_id', () => {
     .then((response) => {
       expect(response.body.msg).toBe('Comment not found');
     });
+  })
+})
+
+describe('GET /api/users', () => {
+  test('responds with an array of all users', () => {
+    return request(app)
+    .get("/api/users")
+
+    .expect(200)
+    .then(({body}) => {
+      const {users} = body
+
+      expect(users).toHaveLength(4)
+      users.forEach(user => {
+        expect(typeof user.username).toBe("string");
+        expect(typeof user.name).toBe("string");
+        expect(typeof user.avatar_url).toBe("string");
+      });
+    })
   })
 })
