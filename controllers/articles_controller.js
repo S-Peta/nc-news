@@ -1,18 +1,17 @@
 const {listArticles, selectArticle, updateArticle} = require("../models/article_model")
 
-function getArticles(req, res) {
-  listArticles().then((articles) => {
+function getArticles(req, res, next) {
+  const {sort_by} = req.query
+  listArticles(sort_by).then((articles) => {
     res.status(200).send({articles})
-  })
+  }).catch(next)
 }
 
 function getArticleById(req, res, next) {
   const {article_id} = req.params
   selectArticle(article_id).then((article) => {
     res.status(200).send({article})
-  }).catch((err) => {
-    next(err)
-  })
+  }).catch(next)
 }
 
 function patchArticle(req, res, next) {
@@ -25,9 +24,7 @@ function patchArticle(req, res, next) {
     } else {
       res.status(200).send({article})
     }
-  }).catch((err) => {
-    next(err)
-  })
+  }).catch(next)
 }
 
 module.exports = {getArticles, getArticleById, patchArticle}

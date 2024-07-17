@@ -25,6 +25,25 @@ describe('GET /api', () => {
   })
 });
 
+describe('GET /api/users', () => {
+  test('responds with an array of all users', () => {
+    return request(app)
+    .get("/api/users")
+
+    .expect(200)
+    .then(({body}) => {
+      const {users} = body
+
+      expect(users).toHaveLength(4)
+      users.forEach(user => {
+        expect(typeof user.username).toBe("string");
+        expect(typeof user.name).toBe("string");
+        expect(typeof user.avatar_url).toBe("string");
+      });
+    })
+  })
+})
+
 describe('GET /api/topics', () => {
   test('Responds with the topics data and status 200', () => {
     return request(app)
@@ -41,7 +60,7 @@ describe('GET /api/topics', () => {
 });
 
 describe('GET /api/articles', () => {
-  test('Responds with the articles data and status 200', () => {
+  test('Responds with the articles data', () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -61,6 +80,28 @@ describe('GET /api/articles', () => {
           expect(typeof article.comment_count).toBe("string");
         })
       })
+  })
+
+  test('Responds with the articles data sorted by the query', () => {
+    return request(app)
+    .get("/api/articles?sort_by=author")
+
+    .expect(200)
+    .then(({body}) => {
+      const {articles} = body
+
+      expect(articles).toBeSortedBy("author", {descending: true})
+    })
+  })
+
+  test('Responds with a 400 error when passed an invalid query', () => {
+    return request(app)
+    .get("/api/articles?sort_by=votes")
+
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe('Invalid input');
+    });
   })
 })
 
@@ -242,24 +283,5 @@ describe('DELETE /api/comments/:comment_id', () => {
     .then((response) => {
       expect(response.body.msg).toBe('Comment not found');
     });
-  })
-})
-
-describe('GET /api/users', () => {
-  test('responds with an array of all users', () => {
-    return request(app)
-    .get("/api/users")
-
-    .expect(200)
-    .then(({body}) => {
-      const {users} = body
-
-      expect(users).toHaveLength(4)
-      users.forEach(user => {
-        expect(typeof user.username).toBe("string");
-        expect(typeof user.name).toBe("string");
-        expect(typeof user.avatar_url).toBe("string");
-      });
-    })
   })
 })
