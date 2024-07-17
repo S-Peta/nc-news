@@ -1,7 +1,14 @@
 const db = require("../db/connection")
 
-function listArticles() {
-  const queryStr = `
+function listArticles(sort_by = "created_at", order = "desc") {
+  const validOptions = ["author", "topic", "created_at"]
+  const validOrders = ["asc", "desc"]
+
+  if(!validOptions.includes(sort_by) || !validOrders.includes(order)) {
+    return Promise.reject({ status: 400, msg: 'Invalid input' })
+  }
+
+  let queryStr = `
     SELECT
       articles.author,
       articles.title,
@@ -14,7 +21,7 @@ function listArticles() {
       FROM articles
       LEFT JOIN comments ON articles.article_id = comments.article_id
       GROUP BY articles.article_id
-      ORDER BY articles.created_at DESC;
+      ORDER BY articles.${sort_by} ${order.toUpperCase()};
     `;
 
   return db.query(queryStr).then((articlesData) => {
