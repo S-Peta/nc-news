@@ -22,10 +22,14 @@ function listArticles() {
   });
 }
 
-function selectArticle(id) {
-  return db.query(`SELECT * FROM articles WHERE $1 = article_id`, [id])
-  .then((result) => {
-    return result.rows
+function selectArticle(article_id) {
+  return db.query(`SELECT * FROM articles WHERE $1 = article_id`, [article_id])
+  .then((article) => {
+    if(article.rows.length === 0) {
+      return Promise.reject(
+        {status: 404, msg: `No article found`});
+    }
+    return article.rows
   })
 
 }
