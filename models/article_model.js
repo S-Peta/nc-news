@@ -27,11 +27,18 @@ function selectArticle(article_id) {
   .then((article) => {
     if(article.rows.length === 0) {
       return Promise.reject(
-        {status: 404, msg: `No article found`});
+        {status: 404, msg: 'No article found'});
     }
     return article.rows
   })
-
 }
 
-module.exports = {listArticles, selectArticle};
+function updateArticle(inc_votes, article_id) {
+    return db.query( `UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *`, [inc_votes, article_id])
+    .then(({rows}) => {
+      return rows[0]
+    })
+  }
+
+
+module.exports = {listArticles, selectArticle, updateArticle};
