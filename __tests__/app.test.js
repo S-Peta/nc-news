@@ -94,6 +94,27 @@ describe('GET /api/articles', () => {
     })
   })
 
+  test('Responds with the articles data sorted descending or ascending', () => {
+    return request(app)
+    .get("/api/articles?order=desc")
+
+    .expect(200)
+    .then(({body}) => {
+      const {articles} = body
+
+      expect(articles).toBeSortedBy("created_at", {descending: true})
+    })
+  })
+
+  test('Responds with a 400 error when passed an invalid query', () => {
+    return request(app)
+    .get("/api/articles?sort_by=invalidColumn")
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe('Invalid input');
+    });
+  })
+
   test('Responds with a 400 error when passed an invalid query', () => {
     return request(app)
     .get("/api/articles?sort_by=votes")
