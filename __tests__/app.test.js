@@ -86,13 +86,13 @@ describe('GET /api/articles/:article_id', () => {
       })
   })
 
-  test('Responds with an error when given article doesn exist', () => {
+  test('responds with a 404 error when passed an invalid id', () => {
     return request(app)
     .get('/api/articles/99')
     .expect(404)
   })
 
-  test('Responds with an error when given endpoint doesn exist', () => {
+  test('responds with a 400 error when passed an invalid data type', () => {
     return request(app)
     .get('/api/articles/notAnId')
     .expect(400)
@@ -119,13 +119,13 @@ describe('GET /api/articles/:article_id/comments', () => {
       })
   })
 
-  test('Responds with an error when given article doesn exist', () => {
+  test('responds with a 404 error when passed an invalid id', () => {
     return request(app)
     .get('/api/articles/99/comments')
     .expect(404)
   })
 
-  test('Responds with an error when given endpoint doesn exist', () => {
+  test('responds with a 400 error when passed an invalid data type', () => {
     return request(app)
     .get('/api/articles/notAnId/comments')
     .expect(400)
@@ -152,7 +152,7 @@ describe('POST /api/articles/:article_id/comments', () => {
     })
   })
 
-  test('Responds with an error when given article doesn exist', () => {
+  test('responds with a 404 error when passed an invalid id', () => {
     return request(app)
     .post('/api/articles/99/comments')
     .send({
@@ -166,7 +166,7 @@ describe('POST /api/articles/:article_id/comments', () => {
     });
   })
 
-  test('Responds with an error when given endpoint doesn exist', () => {
+  test('responds with a 400 error when passed an invalid data type', () => {
     return request(app)
     .post('/api/articles/notAnId/comments')
     .send({
@@ -203,7 +203,7 @@ describe('PATCH /api/articles/:article_id', () => {
     })
   })
 
-  test('Responds with an error 404 when given article doesn exist', () => {
+  test('responds with a 404 error when passed an invalid id', () => {
     return request(app)
     .patch('/api/articles/99')
     .send({inc_votes: 15})
@@ -214,7 +214,7 @@ describe('PATCH /api/articles/:article_id', () => {
     });
   })
 
-  test('Responds with an error 400 when given endpoint doesn exist', () => {
+  test('responds with a 400 error when passed an invalid data type', () => {
     return request(app)
     .patch('/api/articles/notAnId')
     .send({inc_votes: 15})
@@ -222,6 +222,24 @@ describe('PATCH /api/articles/:article_id', () => {
     .expect(400)
     .then((response) => {
       expect(response.body.msg).toBe('Invalid input');
+    });
+  })
+})
+
+describe.only('DELETE /api/comments/:comment_id', () => {
+  test('responds 204 status when deleted comment', () => {
+    return request(app)
+    .delete("/api/comments/3")
+    .expect(204)
+  })
+
+  test('responds with a 404 error when passed an invalid id', () => {
+    return request(app)
+    .delete("/api/comments/99")
+
+    .expect(404)
+    .then((response) => {
+      expect(response.body.msg).toBe('Comment not found');
     });
   })
 })
