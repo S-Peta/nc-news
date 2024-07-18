@@ -149,7 +149,7 @@ describe('GET /api/articles/:article_id', () => {
       .expect(200)
       .then(({body}) => {
         const expectedBody =
-          [{
+          {
             article_id: 1,
             title: "Living in the shadow of a great man",
             topic: "mitch",
@@ -159,19 +159,30 @@ describe('GET /api/articles/:article_id', () => {
             votes: 100,
             article_img_url:
               "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          }]
+            comment_count: "11"
+          }
 
         expect(body.article).toEqual(expectedBody);
       })
   })
 
-  test('responds with a 404 error when passed an invalid id', () => {
+  test('Return comments 0 if no comments at the article', () => {
+    return request(app)
+      .get('/api/articles/4')
+      .expect(200)
+      .then(({body}) => {
+
+        expect(body.article.comment_count).toBe("0");
+      })
+  })
+
+  test('Responds with a 404 error when passed an invalid id', () => {
     return request(app)
     .get('/api/articles/99')
     .expect(404)
   })
 
-  test('responds with a 400 error when passed an invalid data type', () => {
+  test('Responds with a 400 error when passed an invalid data type', () => {
     return request(app)
     .get('/api/articles/notAnId')
     .expect(400)
