@@ -1,8 +1,8 @@
 const {listArticles, selectArticle, updateArticle} = require("../models/article_model")
 
 function getArticles(req, res, next) {
-  const {sort_by, order} = req.query
-  listArticles(sort_by, order).then((articles) => {
+  const {sort_by, order, topic} = req.query
+  listArticles(sort_by, order, topic).then((articles) => {
     res.status(200).send({articles})
   }).catch(next)
 }
