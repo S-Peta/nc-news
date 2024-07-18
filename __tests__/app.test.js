@@ -25,10 +25,10 @@ describe('GET /api', () => {
   })
 });
 
-describe('GET /api/users', () => {
+describe('GET /users', () => {
   test('responds with an array of all users', () => {
     return request(app)
-    .get("/api/users")
+    .get("/users")
 
     .expect(200)
     .then(({body}) => {
@@ -44,10 +44,10 @@ describe('GET /api/users', () => {
   })
 })
 
-describe('GET /api/topics', () => {
+describe('GET /topics', () => {
   test('Responds with the topics data and status 200', () => {
     return request(app)
-      .get('/api/topics')
+      .get('/topics')
       .expect(200)
       .then(({body}) => {
         expect(body.topics).toEqual([
@@ -59,10 +59,10 @@ describe('GET /api/topics', () => {
   })
 });
 
-describe('GET /api/articles', () => {
+describe('GET /articles', () => {
   test('Responds with the articles data', () => {
     return request(app)
-      .get("/api/articles")
+      .get("/articles")
       .expect(200)
       .then(({body}) => {
         const {articles} = body;
@@ -84,7 +84,7 @@ describe('GET /api/articles', () => {
 
   test('Responds with the articles data sorted by the query', () => {
     return request(app)
-    .get("/api/articles?sort_by=author")
+    .get("/articles?sort_by=author")
 
     .expect(200)
     .then(({body}) => {
@@ -96,7 +96,7 @@ describe('GET /api/articles', () => {
 
   test('Responds with the articles data sorted descending or ascending', () => {
     return request(app)
-    .get("/api/articles?order=desc")
+    .get("/articles?order=desc")
 
     .expect(200)
     .then(({body}) => {
@@ -108,7 +108,7 @@ describe('GET /api/articles', () => {
 
   test('Responds with a 400 error when passed an invalid query', () => {
     return request(app)
-    .get("/api/articles?sort_by=invalidColumn")
+    .get("/articles?sort_by=invalidColumn")
     .expect(400)
     .then(({body}) => {
       expect(body.msg).toBe('Invalid input');
@@ -117,7 +117,7 @@ describe('GET /api/articles', () => {
 
   test('Responds with a 400 error when passed an invalid query', () => {
     return request(app)
-    .get("/api/articles?sort_by=votes")
+    .get("/articles?sort_by=votes")
 
     .expect(400)
     .then(({body}) => {
@@ -127,7 +127,7 @@ describe('GET /api/articles', () => {
 
   test('Responds with the articles data filtered by the topic query', () => {
     return request(app)
-    .get("/api/articles?topic=mitch")
+    .get("/articles?topic=mitch")
     .expect(200)
     .then(({body}) => {
       const {articles} = body
@@ -143,22 +143,22 @@ describe('GET /api/articles', () => {
 
   test('Responds with a 404 error when passed topic has to article associated ', () => {
     return request(app)
-    .get("/api/articles?topic=paper")
+    .get("/articles?topic=paper")
     .expect(404)
   })
 
   test('Responds with a 400 error if passed topic doenst exists', () => {
     return request(app)
-    .get("/api/articles?topic=invalid")
+    .get("/articles?topic=invalid")
     .expect(400)
   })
 
 })
 
-describe('GET /api/articles/:article_id', () => {
+describe('GET /articles/:article_id', () => {
   test('Return the data with the right article', () => {
     return request(app)
-      .get('/api/articles/1')
+      .get('/articles/1')
       .expect(200)
       .then(({body}) => {
         const expectedBody =
@@ -181,7 +181,7 @@ describe('GET /api/articles/:article_id', () => {
 
   test('Return comments 0 if no comments at the article', () => {
     return request(app)
-      .get('/api/articles/4')
+      .get('/articles/4')
       .expect(200)
       .then(({body}) => {
 
@@ -192,21 +192,21 @@ describe('GET /api/articles/:article_id', () => {
 
   test('Responds with a 404 error when passed an invalid id', () => {
     return request(app)
-    .get('/api/articles/99')
+    .get('/articles/99')
     .expect(404)
   })
 
   test('Responds with a 400 error when passed an invalid data type', () => {
     return request(app)
-    .get('/api/articles/notAnId')
+    .get('/articles/notAnId')
     .expect(400)
   })
 })
 
-describe('GET /api/articles/:article_id/comments', () => {
+describe('GET /articles/:article_id/comments', () => {
   test('Return the data with the right article', () => {
     return request(app)
-      .get('/api/articles/1/comments')
+      .get('/articles/1/comments')
       .expect(200)
       .then(({body}) => {
         const {comments} = body
@@ -225,21 +225,21 @@ describe('GET /api/articles/:article_id/comments', () => {
 
   test('responds with a 404 error when passed an invalid id', () => {
     return request(app)
-    .get('/api/articles/99/comments')
+    .get('/articles/99/comments')
     .expect(404)
   })
 
   test('responds with a 400 error when passed an invalid data type', () => {
     return request(app)
-    .get('/api/articles/notAnId/comments')
+    .get('/articles/notAnId/comments')
     .expect(400)
   })
 })
 
-describe('POST /api/articles/:article_id/comments', () => {
+describe('POST /articles/:article_id/comments', () => {
   test('Responds with the body posted by the client', () => {
     return request(app)
-    .post('/api/articles/2/comments')
+    .post('/articles/2/comments')
     .send({
       author: 'butter_bridge',
       article_id: 2,
@@ -258,7 +258,7 @@ describe('POST /api/articles/:article_id/comments', () => {
 
   test('Responds with a 404 error when passed an invalid id', () => {
     return request(app)
-    .post('/api/articles/99/comments')
+    .post('/articles/99/comments')
     .send({
       author: 'butter_bridge',
       article_id: 2,
@@ -272,7 +272,7 @@ describe('POST /api/articles/:article_id/comments', () => {
 
   test('Responds with a 400 error when passed an invalid data type', () => {
     return request(app)
-    .post('/api/articles/notAnId/comments')
+    .post('/articles/notAnId/comments')
     .send({
       author: 'butter_bridge',
       article_id: 2,
@@ -285,10 +285,10 @@ describe('POST /api/articles/:article_id/comments', () => {
   })
 })
 
-describe('PATCH /api/articles/:article_id', () => {
+describe('PATCH /articles/:article_id', () => {
   test('responds with the field votes updated', () => {
     return request(app)
-    .patch('/api/articles/3')
+    .patch('/articles/3')
     .send({inc_votes: 15})
 
     .expect(200)
@@ -309,7 +309,7 @@ describe('PATCH /api/articles/:article_id', () => {
 
   test('responds with a 404 error when passed an invalid id', () => {
     return request(app)
-    .patch('/api/articles/99')
+    .patch('/articles/99')
     .send({inc_votes: 15})
 
     .expect(404)
@@ -320,7 +320,7 @@ describe('PATCH /api/articles/:article_id', () => {
 
   test('responds with a 400 error when passed an invalid data type', () => {
     return request(app)
-    .patch('/api/articles/notAnId')
+    .patch('/articles/notAnId')
     .send({inc_votes: 15})
 
     .expect(400)
@@ -330,16 +330,16 @@ describe('PATCH /api/articles/:article_id', () => {
   })
 })
 
-describe('DELETE /api/comments/:comment_id', () => {
+describe('DELETE /comments/:comment_id', () => {
   test('responds 204 status when deleted comment', () => {
     return request(app)
-    .delete("/api/comments/3")
+    .delete("/comments/3")
     .expect(204)
   })
 
   test('responds with a 404 error when passed an invalid id', () => {
     return request(app)
-    .delete("/api/comments/99")
+    .delete("/comments/99")
 
     .expect(404)
     .then((response) => {
