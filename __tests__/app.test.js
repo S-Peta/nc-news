@@ -44,6 +44,44 @@ describe('GET /users', () => {
   })
 })
 
+describe('GET /users/:username', () => {
+  test('Return the user with the given username', () => {
+    return request(app)
+    .get("/users/butter_bridge")
+
+    .expect(200)
+    .then(({body}) => {
+
+      expect(body.user).toMatchObject({
+        username: 'butter_bridge',
+        name: 'jonny',
+        avatar_url:
+          'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+      })
+    })
+  })
+
+  test('Responds with a 400 error when passed an invalid user', () => {
+    return request(app)
+    .get("/users/banana")
+
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe('Invalid input');
+    });
+  })
+
+  test('Responds with a 400 error when passed an invalid user', () => {
+    return request(app)
+    .get("/users/3")
+
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe('Invalid input');
+    });
+  })
+})
+
 describe('GET /topics', () => {
   test('Responds with the topics data and status 200', () => {
     return request(app)
