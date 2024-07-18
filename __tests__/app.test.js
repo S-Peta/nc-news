@@ -140,6 +140,19 @@ describe('GET /api/articles', () => {
       })
     })
   })
+
+  test('Responds with a 404 error when passed topic has to article associated ', () => {
+    return request(app)
+    .get("/api/articles?topic=paper")
+    .expect(404)
+  })
+
+  test('Responds with a 400 error if passed topic doenst exists', () => {
+    return request(app)
+    .get("/api/articles?topic=invalid")
+    .expect(400)
+  })
+
 })
 
 describe('GET /api/articles/:article_id', () => {
@@ -172,6 +185,7 @@ describe('GET /api/articles/:article_id', () => {
       .expect(200)
       .then(({body}) => {
 
+        expect(body.article.article_id).toBe(4)
         expect(body.article.comment_count).toBe("0");
       })
   })
@@ -242,7 +256,7 @@ describe('POST /api/articles/:article_id/comments', () => {
     })
   })
 
-  test('responds with a 404 error when passed an invalid id', () => {
+  test('Responds with a 404 error when passed an invalid id', () => {
     return request(app)
     .post('/api/articles/99/comments')
     .send({
@@ -256,7 +270,7 @@ describe('POST /api/articles/:article_id/comments', () => {
     });
   })
 
-  test('responds with a 400 error when passed an invalid data type', () => {
+  test('Responds with a 400 error when passed an invalid data type', () => {
     return request(app)
     .post('/api/articles/notAnId/comments')
     .send({
