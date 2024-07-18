@@ -124,6 +124,22 @@ describe('GET /api/articles', () => {
       expect(body.msg).toBe('Invalid input');
     });
   })
+
+  test('Responds with the articles data filtered by the topic query', () => {
+    return request(app)
+    .get("/api/articles?topic=mitch")
+    .expect(200)
+    .then(({body}) => {
+      const {articles} = body
+
+      expect(articles).toHaveLength(12);
+      expect(articles).toBeSortedBy("created_at", {descending: true});
+      articles.forEach((article) => {
+        expect(article.topic).toBe("mitch");
+
+      })
+    })
+  })
 })
 
 describe('GET /api/articles/:article_id', () => {
