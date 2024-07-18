@@ -3,44 +3,56 @@ const db = require("../db/connection")
 function listArticles(sort_by = "created_at", order = "desc", topic) {
   const validOptions = ["author", "title", "created_at"];
   const validOrders = ["asc", "desc"];
-  const validTopics = ["mitch", "cats", "paper", undefined];
 
-  if (!validOptions.includes(sort_by) || !validOrders.includes(order) || !validTopics.includes(topic)) {
-      return Promise.reject({ status: 400, msg: 'Invalid input' });
+  if (!validOptions.includes(sort_by) || !validOrders.includes(order)) {
+    return Promise.reject({ status: 400, msg: 'Invalid input' });
   }
 
-  let queryStr = `
+  const topicPromise = topic ? db.query('SELECT slug FROM topics') : Promise.resolve({ rows: [] });
+
+  return topicPromise.then(({ rows }) => {
+    const validTopics = rows.map(row => row.slug);
+
+    if (topic && !validTopics.includes(topic)) {
+      return Promise.reject({ status: 400, msg: 'Invalid topic' });
+    }
+
+    let queryStr = `
       SELECT
-          articles.author,
-          articles.title,
-          articles.article_id,
-          articles.topic,
-          articles.created_at,
-          articles.votes,
-          articles.article_img_url,
-          COUNT(comments.comment_id) AS comment_count
+        articles.author,
+        articles.title,
+        articles.article_id,
+        articles.topic,
+        articles.created_at,
+        articles.votes,
+        articles.article_img_url,
+        COUNT(comments.comment_id) AS comment_count
       FROM articles
       LEFT JOIN comments ON articles.article_id = comments.article_id
-  `;
+    `;
 
-  const queryParams = [];
-  if (topic) {
+    const queryParams = [];
+    if (topic) {
       queryStr += ` WHERE articles.topic = $1`;
       queryParams.push(topic);
-  }
+    }
 
-  queryStr += `
+    queryStr += `
       GROUP BY articles.article_id
       ORDER BY ${sort_by} ${order.toUpperCase()}
-  `;
+    `;
 
-  return db.query(queryStr, queryParams).then((articlesData) => {
+    return db.query(queryStr, queryParams).then((articlesData) => {
       return articlesData.rows;
+    });
   });
 }
 
+module.exports = listArticles;
 
-function selectArticle(article_id) {
+
+
+  function selectArticle(article_id) {
   const queryStr = `
     SELECT
       articles.article_id,
