@@ -321,21 +321,21 @@ describe('GET /articles/:article_id', () => {
 describe('GET /articles/:article_id/comments', () => {
   test('Return the data with the right article', () => {
     return request(app)
-      .get('/articles/1/comments')
-      .expect(200)
-      .then(({body}) => {
-        const {comments} = body
+    .get('/articles/1/comments')
+    .expect(200)
+    .then(({body}) => {
+      const {comments} = body
 
-        expect(comments).toHaveLength(11);
-        expect(comments).toBeSortedBy("created_at", {descending: true});
-        comments.forEach((comment) => {
-          expect(typeof comment.body).toBe("string");
-          expect(typeof comment.votes).toBe("number");
-          expect(typeof comment.author).toBe("string");
-          expect(typeof comment.article_id).toBe("number");
-          expect(typeof comment.created_at).toBe("string");
-        })
+      expect(comments).toHaveLength(10);
+      expect(comments).toBeSortedBy("created_at", {descending: true});
+      comments.forEach((comment) => {
+        expect(typeof comment.body).toBe("string");
+        expect(typeof comment.votes).toBe("number");
+        expect(typeof comment.author).toBe("string");
+        expect(typeof comment.article_id).toBe("number");
+        expect(typeof comment.created_at).toBe("string");
       })
+    })
   })
 
   test('responds with a 404 error when passed an invalid id', () => {
@@ -347,6 +347,24 @@ describe('GET /articles/:article_id/comments', () => {
   test('responds with a 400 error when passed an invalid data type', () => {
     return request(app)
     .get('/articles/notAnId/comments')
+    .expect(400)
+  })
+
+  test('Responds with the comments limited by the queries', () => {
+    return request(app)
+    .get("/articles/1/comments?limit=5&p=2")
+    .expect(200)
+    .then(({body}) => {
+      const {comments} = body
+
+      expect(comments).toHaveLength(5)
+      expect(comments[0].comment_id).toBe(18)
+    })
+  })
+
+  test('Responds with a 400 error when passed invalid query', () => {
+    return request(app)
+    .get("/articles?limit=invalid")
     .expect(400)
   })
 })
