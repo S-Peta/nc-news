@@ -3,7 +3,8 @@ const {listComments, insertComment, updateComment, removeComment} = require("../
 
 function getCommentsByArticleId(req, res, next) {
   const {article_id} = req.params
-  listComments(article_id).then((comments) => {
+  const {limit, p} = req.query
+  listComments(article_id, limit, p).then((comments) => {
     res.status(200).send({comments})
   }).catch((err) => {
     next(err)
