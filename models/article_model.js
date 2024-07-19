@@ -48,6 +48,63 @@ function listArticles(sort_by = "created_at", order = "desc", topic) {
   });
 }
 
+function insertArticle(articleData) {
+  const { title, topic, author, body, article_img_url } = articleData;
+
+  const queryStr = article_img_url
+    ? `INSERT INTO articles (title, topic, author, body, article_img_url)
+      VALUES ($1, $2, $3, $4, $5) RETURNING article_id`
+    : `INSERT INTO articles (title, topic, author, body)
+      VALUES ($1, $2, $3, $4) RETURNING article_id`;
+
+  const queryParams = article_img_url
+    ? [title, topic, author, body, article_img_url]
+    : [title, topic, author, body];
+
+  const topicQueryPromise = `SELECT * FROM topics WHERE slug = $1`;
+  const authorQueryPromise = `SELECT * FROM users WHERE username = $1`;
+
+  return db.query(topicQueryPromise, [topic])
+    .then(({ rows: topicRows }) => {
+      if (topicRows.length === 0) {
+        throw { status: 404, msg: "Topic not found" };
+      }
+      return db.query(authorQueryPromise, [author]);
+    })
+    .then(({ rows: authorRows }) => {
+      if (authorRows.length === 0) {
+        throw { status: 404, msg: "Author not found" };
+      }
+      return db.query(queryStr, queryParams);
+    })
+    .then(({ rows }) => {
+      const articleId = rows[0].article_id;
+
+      return db.query(`
+        SELECT
+          articles.article_id,
+          articles.title,
+          articles.topic,
+          articles.author,
+          articles.body,
+          articles.created_at,
+          articles.votes,
+          articles.article_img_url,
+          COUNT(comments.comment_id) AS comment_count
+        FROM articles
+        LEFT JOIN comments ON articles.article_id = comments.article_id
+        WHERE articles.article_id = $1
+        GROUP BY articles.article_id
+      `, [articleId]);
+    })
+    .then(({ rows }) => {
+      return rows[0];
+    });
+}
+
+
+
+
 function selectArticle(article_id) {
   const queryStr = `
     SELECT
@@ -81,4 +138,4 @@ function updateArticle(inc_votes, article_id) {
 }
 
 
-module.exports = {listArticles, selectArticle, updateArticle};
+module.exports = {listArticles, insertArticle, selectArticle, updateArticle};

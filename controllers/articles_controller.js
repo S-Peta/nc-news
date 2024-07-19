@@ -1,4 +1,4 @@
-const {listArticles, selectArticle, updateArticle} = require("../models/article_model")
+const {listArticles, insertArticle, selectArticle, updateArticle} = require("../models/article_model")
 
 function getArticles(req, res, next) {
   const {sort_by, order, topic} = req.query
@@ -7,6 +7,13 @@ function getArticles(req, res, next) {
       return Promise.reject({status: 404, msg: 'Article not found'})
     }
     res.status(200).send({articles})
+  }).catch(next)
+}
+
+function postArticle(req, res, next) {
+  const articleData = req.body
+  insertArticle(articleData).then((article) => {
+    res.status(201).send({article})
   }).catch(next)
 }
 
@@ -34,4 +41,4 @@ function patchArticle(req, res, next) {
   }).catch(next)
 }
 
-module.exports = {getArticles, getArticleById, patchArticle}
+module.exports = {getArticles, postArticle, getArticleById, patchArticle}
