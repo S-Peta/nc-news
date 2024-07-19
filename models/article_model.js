@@ -1,7 +1,7 @@
 const db = require("../db/connection")
 
-function listArticles(sort_by = "created_at", order = "desc", topic) {
-  const validOptions = ["author", "title", "created_at"];
+function listArticles(sort_by = "created_at", order = "desc", topic, limit = 10, p = 0) {
+  const validOptions = ["author", "title", "created_at", "article_id"];
   const validOrders = ["asc", "desc"];
 
   if (!validOptions.includes(sort_by) || !validOrders.includes(order)) {
@@ -37,16 +37,20 @@ function listArticles(sort_by = "created_at", order = "desc", topic) {
       queryParams.push(topic);
     }
 
+    queryParams.push(limit, p);
+
     queryStr += `
       GROUP BY articles.article_id
       ORDER BY ${sort_by} ${order.toUpperCase()}
-    `;
+      LIMIT $${queryParams.length - 1}
+      OFFSET $${queryParams.length}`;
 
     return db.query(queryStr, queryParams).then((articlesData) => {
       return articlesData.rows;
     });
   });
 }
+
 
 function insertArticle(articleData) {
   const { title, topic, author, body, article_img_url } = articleData;

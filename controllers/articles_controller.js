@@ -1,8 +1,8 @@
 const {listArticles, insertArticle, selectArticle, updateArticle} = require("../models/article_model")
 
 function getArticles(req, res, next) {
-  const {sort_by, order, topic} = req.query
-  listArticles(sort_by, order, topic).then((articles) => {
+  const {sort_by, order, topic, limit, p} = req.query
+  listArticles(sort_by, order, topic, limit, p).then((articles) => {
     if(articles.length === 0) {
       return Promise.reject({status: 404, msg: 'Article not found'})
     }
