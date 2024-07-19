@@ -174,7 +174,6 @@ describe('GET /articles', () => {
       expect(articles).toBeSortedBy("created_at", {descending: true});
       articles.forEach((article) => {
         expect(article.topic).toBe("mitch");
-
       })
     })
   })
@@ -190,7 +189,57 @@ describe('GET /articles', () => {
     .get("/articles?topic=invalid")
     .expect(400)
   })
+})
 
+describe('POST /articles', () => {
+  test('Responds with the article posted by the client', () => {
+    return request(app)
+    .post("/articles")
+    .send({
+      title: "Living the dream",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence beautiful"
+    })
+    .expect(201)
+    .then(({body}) => {
+      expect(body.article).toMatchObject({
+        article_id: 14,
+        title: "Living the dream",
+        topic: "mitch",
+        author: "butter_bridge",
+        body: "I find this existence beautiful",
+        votes: 0,
+        article_img_url:
+      'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700',
+        comment_count: "0"
+      })
+    })
+  })
+
+  test('Responds with a 404 error when passed an invalid topic', () => {
+    return request(app)
+    .post("/articles")
+    .send({
+      title: "Living the dream",
+      topic: "invalid_topic",
+      author: "butter_bridge",
+      body: "I find this existence beautiful"
+    })
+    .expect(404)
+  })
+
+  test('Responds with a 404 error when passed an invalid author', () => {
+    return request(app)
+    .post("/articles")
+    .send({
+      title: "Living the dream",
+      topic: "mitch",
+      author: "invalid_author",
+      body: "I find this existence beautiful"
+    })
+    .expect(404)
+  })
 })
 
 describe('GET /articles/:article_id', () => {
