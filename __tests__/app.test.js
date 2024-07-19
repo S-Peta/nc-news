@@ -105,7 +105,7 @@ describe('GET /articles', () => {
       .then(({body}) => {
         const {articles} = body;
 
-        expect(articles).toHaveLength(13);
+        expect(articles).toHaveLength(10);
         expect(articles).toBeSortedBy("created_at", {descending: true});
         articles.forEach((article) => {
           expect(typeof article.author).toBe("string");
@@ -170,7 +170,7 @@ describe('GET /articles', () => {
     .then(({body}) => {
       const {articles} = body
 
-      expect(articles).toHaveLength(12);
+      expect(articles).toHaveLength(10);
       expect(articles).toBeSortedBy("created_at", {descending: true});
       articles.forEach((article) => {
         expect(article.topic).toBe("mitch");
@@ -178,7 +178,7 @@ describe('GET /articles', () => {
     })
   })
 
-  test('Responds with a 404 error when passed topic has to article associated ', () => {
+  test('Responds with a 404 error when passed topic has to article associated', () => {
     return request(app)
     .get("/articles?topic=paper")
     .expect(404)
@@ -187,6 +187,34 @@ describe('GET /articles', () => {
   test('Responds with a 400 error if passed topic doenst exists', () => {
     return request(app)
     .get("/articles?topic=invalid")
+    .expect(400)
+  })
+
+  test('Responds with the articles data limited by the query', () => {
+    return request(app)
+    .get("/articles?limit=5")
+    .expect(200)
+    .then(({body}) => {
+      const {articles} = body
+
+      expect(articles).toHaveLength(5);
+    })
+  })
+
+  test('Responds with an array of article filtered by all the queries', () => {
+    return request(app)
+    .get("/articles?limit=5&p=5&sort_by=article_id&order=asc")
+    .expect(200)
+    .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(5)
+        expect(articles.map(article => article.article_id))
+            .toStrictEqual([6, 7, 8, 9, 10])
+    })
+  })
+
+  test('Responds with a 400 error when passed invalid query', () => {
+    return request(app)
+    .get("/articles?limit=5&p=5&sort_by=invalid_num&order=asc")
     .expect(400)
   })
 })
