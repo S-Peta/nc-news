@@ -48,11 +48,7 @@ function listArticles(sort_by = "created_at", order = "desc", topic) {
   });
 }
 
-module.exports = listArticles;
-
-
-
-  function selectArticle(article_id) {
+function selectArticle(article_id) {
   const queryStr = `
     SELECT
       articles.article_id,
@@ -71,18 +67,18 @@ module.exports = listArticles;
   `;
 
   return db.query(queryStr, [article_id])
-    .then((result) => {
-      return result.rows[0];
-    });
+  .then((result) => {
+    return result.rows[0];
+  });
 }
 
 
 function updateArticle(inc_votes, article_id) {
-    return db.query( `UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *`, [inc_votes, article_id])
-    .then(({rows}) => {
-      return rows[0]
-    })
-  }
+  return db.query( `UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *`, [inc_votes, article_id])
+  .then(({rows}) => {
+    return rows[0]
+  })
+}
 
 
 module.exports = {listArticles, selectArticle, updateArticle};

@@ -284,8 +284,8 @@ describe('POST /articles/:article_id/comments', () => {
       body: "sdoihod o h oe hgoie jo ej eij oiejrfoiej foejri"
     })
     .expect(201)
-    .then((response) => {
-      expect(response.body.comment).toMatchObject({
+    .then(({body}) => {
+      expect(body.comment).toMatchObject({
         body: "sdoihod o h oe hgoie jo ej eij oiejrfoiej foejri",
         votes: 0,
         author: 'butter_bridge',
@@ -303,8 +303,8 @@ describe('POST /articles/:article_id/comments', () => {
       body: "sdoihod o h oe hgoie jo ej eij oiejrfoiej foejri"
     })
     .expect(404)
-    .then((response) => {
-      expect(response.body.msg).toBe('Article not found');
+    .then(({body}) => {
+      expect(body.msg).toBe('Article not found');
     });
   })
 
@@ -317,8 +317,8 @@ describe('POST /articles/:article_id/comments', () => {
       body: "sdoihod o h oe hgoie jo ej eij oiejrfoiej foejri"
     })
     .expect(400)
-    .then((response) => {
-      expect(response.body.msg).toBe('Invalid input');
+    .then(({body}) => {
+      expect(body.msg).toBe('Invalid input');
     });
   })
 })
@@ -330,8 +330,8 @@ describe('PATCH /articles/:article_id', () => {
     .send({inc_votes: 15})
 
     .expect(200)
-    .then((response) => {
-      expect(response.body.article).toMatchObject({
+    .then(({body}) => {
+      expect(body.article).toMatchObject({
         article_id: 3,
         title: "Eight pug gifs that remind me of mitch",
         topic: "mitch",
@@ -351,8 +351,8 @@ describe('PATCH /articles/:article_id', () => {
     .send({inc_votes: 15})
 
     .expect(404)
-    .then((response) => {
-      expect(response.body.msg).toBe('Article not found');
+    .then(({body}) => {
+      expect(body.msg).toBe('Article not found');
     });
   })
 
@@ -362,26 +362,96 @@ describe('PATCH /articles/:article_id', () => {
     .send({inc_votes: 15})
 
     .expect(400)
-    .then((response) => {
-      expect(response.body.msg).toBe('Invalid input');
+    .then(({body}) => {
+      expect(body.msg).toBe('Invalid input');
+    });
+  })
+})
+
+describe('PATCH /comments/:comment_id', () => {
+  test('Responds 200 status when updates comment', () => {
+    return request(app)
+    .patch('/comments/3')
+    .send({inc_votes: 1})
+
+    .expect(200)
+    .then(({body}) => {
+      expect(body.comment).toMatchObject({
+        comment_id: 3,
+        body: "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+        votes: 101,
+        author: "icellusedkars",
+        article_id: 1,
+        created_at: "2020-03-01T01:13:00.000Z"
+      })
+    })
+  })
+
+  test('Responds 200 status when updates comment', () => {
+    return request(app)
+    .patch('/comments/3')
+    .send({inc_votes: -1})
+
+    .expect(200)
+    .then(({body}) => {
+      expect(body.comment).toMatchObject({
+        comment_id: 3,
+        body: "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+        votes: 99,
+        author: "icellusedkars",
+        article_id: 1,
+        created_at: "2020-03-01T01:13:00.000Z"
+      })
+    })
+  })
+
+  test('Responds with a 404 error when passed an invalid id', () => {
+    return request(app)
+    .patch('/comments/99')
+    .send({inc_votes: 1})
+
+    .expect(404)
+    .then(({body}) => {
+      expect(body.msg).toBe('Comment not found');
+    });
+  })
+
+  test('Responds with a 400 error when passed an invalid input', () => {
+    return request(app)
+    .patch('/comments/invalid')
+    .send({inc_votes: 1})
+
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe("Invalid input");
     });
   })
 })
 
 describe('DELETE /comments/:comment_id', () => {
-  test('responds 204 status when deleted comment', () => {
+  test('Responds 204 status when deleted comment', () => {
     return request(app)
     .delete("/comments/3")
     .expect(204)
   })
 
-  test('responds with a 404 error when passed an invalid id', () => {
+  test('Responds with a 404 error when passed an invalid id', () => {
     return request(app)
     .delete("/comments/99")
 
     .expect(404)
-    .then((response) => {
-      expect(response.body.msg).toBe('Comment not found');
+    .then(({body}) => {
+      expect(body.msg).toBe('Comment not found');
+    });
+  })
+
+  test('Responds with a 400 error when passed an invalid data type', () => {
+    return request(app)
+    .delete("/comments/invalid")
+
+    .expect(400)
+    .then(({body}) => {
+      expect(body.msg).toBe('Invalid input');
     });
   })
 })

@@ -23,7 +23,6 @@ app.use((err, req, res, next) => {
     res.status(400).send({ msg: "Invalid input" });
   }
   if (err.status && err.msg) {
-
     res.status(err.status).send({ msg: err.msg });
   }
   else {
