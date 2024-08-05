@@ -15,10 +15,10 @@ app.use(express.json());
 
 app.get("/api", getEndpoints)
 
-app.use('/users', userRoute)
-app.use('/articles', articlesRoute)
-app.use('/comments', commentsRoute)
-app.use('/topics', topicsRoute)
+app.use('/api/users', userRoute)
+app.use('/api/articles', articlesRoute)
+app.use('/api/comments', commentsRoute)
+app.use('/api/topics', topicsRoute)
 
 
 app.use((err, req, res, next) => {

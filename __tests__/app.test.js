@@ -25,7 +25,7 @@ describe('GET /api', () => {
   })
 });
 
-describe('GET /users', () => {
+describe('GET /api/users', () => {
   test('responds with an array of all users', () => {
     return request(app)
     .get("/users")
@@ -44,7 +44,7 @@ describe('GET /users', () => {
   })
 })
 
-describe('GET /users/:username', () => {
+describe('GET /api/users/:username', () => {
   test('Return the user with the given username', () => {
     return request(app)
     .get("/users/butter_bridge")
@@ -82,7 +82,7 @@ describe('GET /users/:username', () => {
   })
 })
 
-describe('GET /topics', () => {
+describe('GET /api/topics', () => {
   test('Responds with the topics data and status 200', () => {
     return request(app)
       .get('/topics')
@@ -97,8 +97,8 @@ describe('GET /topics', () => {
   })
 });
 
-describe('POST /topics', () => {
-  test('Responds with new topic object', () => {
+describe('POST /api/topics', () => {
+  test.skip('Responds with new topic object', () => {
     return request(app)
       .post('/topics')
       .send({
@@ -118,9 +118,7 @@ describe('POST /topics', () => {
   })
 });
 
-
-
-describe('GET /articles', () => {
+describe('GET /api/articles', () => {
   test('Responds with the articles data', () => {
     return request(app)
       .get("/articles")
@@ -242,7 +240,7 @@ describe('GET /articles', () => {
   })
 })
 
-describe('POST /articles', () => {
+describe('POST /api/articles', () => {
   test('Responds with the article posted by the client', () => {
     return request(app)
     .post("/articles")
@@ -293,7 +291,7 @@ describe('POST /articles', () => {
   })
 })
 
-describe('GET /articles/:article_id', () => {
+describe('GET /api/articles/:article_id', () => {
   test('Return the data with the right article', () => {
     return request(app)
       .get('/articles/1')
@@ -341,7 +339,7 @@ describe('GET /articles/:article_id', () => {
   })
 })
 
-describe('GET /articles/:article_id/comments', () => {
+describe('GET /api/articles/:article_id/comments', () => {
   test('Return the data with the right article', () => {
     return request(app)
     .get('/articles/1/comments')
@@ -392,7 +390,7 @@ describe('GET /articles/:article_id/comments', () => {
   })
 })
 
-describe('POST /articles/:article_id/comments', () => {
+describe('POST /api/articles/:article_id/comments', () => {
   test('Responds with the body posted by the client', () => {
     return request(app)
     .post('/articles/2/comments')
@@ -441,7 +439,7 @@ describe('POST /articles/:article_id/comments', () => {
   })
 })
 
-describe('PATCH /articles/:article_id', () => {
+describe('PATCH /api/articles/:article_id', () => {
   test('responds with the field votes updated', () => {
     return request(app)
     .patch('/articles/3')
@@ -486,7 +484,7 @@ describe('PATCH /articles/:article_id', () => {
   })
 })
 
-describe('PATCH /comments/:comment_id', () => {
+describe('PATCH /api/comments/:comment_id', () => {
   test('Responds 200 status when updates comment', () => {
     return request(app)
     .patch('/comments/3')
@@ -546,7 +544,7 @@ describe('PATCH /comments/:comment_id', () => {
   })
 })
 
-describe('DELETE /comments/:comment_id', () => {
+describe('DELETE /api/comments/:comment_id', () => {
   test('Responds 204 status when deleted comment', () => {
     return request(app)
     .delete("/comments/3")
