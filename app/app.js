@@ -1,5 +1,6 @@
 const express = require("express");
 const getEndpoints = require("../controllers/endpoints_controller")
+const cors = require('cors');
 
 const userRoute = require("../routes/user")
 const articlesRoute = require("../routes/articles")
@@ -7,6 +8,8 @@ const commentsRoute = require("../routes/comments")
 const topicsRoute = require("../routes/topics")
 
 const app = express()
+
+app.use(cors());
 
 app.use(express.json());
 

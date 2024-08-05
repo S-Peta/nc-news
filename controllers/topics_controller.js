@@ -1,4 +1,4 @@
-const listTopics = require("../models/topic_model")
+const {listTopics, insertTopic} = require("../models/topic_model")
 
 function getTopics(req, res, next) {
   listTopics()
@@ -10,5 +10,13 @@ function getTopics(req, res, next) {
   });
 }
 
+function postTopic(req, res, next) {
+  const topicData = req.body
 
-module.exports = getTopics;
+  insertTopic(topicData).then((topic) => {
+    res.status(201).send({topic})
+  }).catch(next)
+}
+
+
+module.exports = {getTopics, postTopic};

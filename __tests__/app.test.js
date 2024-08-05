@@ -97,6 +97,29 @@ describe('GET /topics', () => {
   })
 });
 
+describe('POST /topics', () => {
+  test('Responds with new topic object', () => {
+    return request(app)
+      .post('/topics')
+      .send({
+        "slug": "topic name here",
+        "description": "description here"
+      })
+
+      .expect(201)
+      .then(({body}) => {
+        expect(body.topics).toEqual([
+          { description: 'The man, the Mitch, the legend', slug: 'mitch' },
+          { description: 'Not dogs', slug: 'cats' },
+          { description: 'what books are made of', slug: 'paper' },
+          { description: 'description here',slug: 'topic name here' }
+        ])
+      })
+  })
+});
+
+
+
 describe('GET /articles', () => {
   test('Responds with the articles data', () => {
     return request(app)
